@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="theme-color" content="#12211d" />
-  <title>Abba Bento — Barcode Sticker</title>
+  <title>Abba Bento — Pengajuan Barcode Sticker</title>
   <style>
     :root{
       --ink:#172522;--muted:#66746f;--line:#e2e9e5;--paper:#fff;--canvas:#f4f7f5;
@@ -151,12 +151,7 @@
         <div class="brand-mark">AB</div>
         <div><div class="brand-name">Abba Bento</div><div class="brand-sub">Barcode Sticker System</div></div>
       </div>
-      <div class="top-actions">
-        <button class="header-btn secondary" id="partnerNav" type="button">Halaman Mitra</button>
-        <button class="header-btn" id="adminNav" type="button">Panel Admin ↗</button>
-      </div>
     </header>
-
     <main class="container">
       <section id="partnerView">
         <div class="hero">
@@ -190,63 +185,16 @@
         </div>
         <div class="footer-note"><span>Abba Bento · Sistem pengajuan barcode sticker</span><span>Untuk kebutuhan operasional mitra</span></div>
       </section>
-
-      <section id="adminView" class="hidden">
-        <div id="adminLoginView">
-          <div class="admin-header"><div><p class="eyebrow">Area terbatas</p><h1>Panel admin</h1><p class="subheading">Masuk untuk mengelola antrean pesanan, menentukan jumlah label, dan mencetak barcode.</p></div><div class="hero-tag"><span class="dot"></span> Admin workstation</div></div>
-          <div id="adminConfigNotice" class="notice warning hidden"><span>⚠</span><div>Firebase belum dikonfigurasi. Kamu bisa mencoba antarmuka dengan simulasi lokal, tetapi pesanan tidak akan tersinkron dengan HP mitra.</div></div>
-          <div class="panel login-card">
-            <div class="side-icon" style="margin-bottom:18px"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><rect x="4" y="10" width="16" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3M12 14v3"/></svg></div>
-            <h2>Login administrator</h2><p class="subheading" style="font-size:12px">Gunakan akun admin Firebase yang sudah diberi akses.</p>
-            <form id="loginForm">
-              <label class="form-label" for="adminEmail">Email admin</label><input class="field" id="adminEmail" name="email" type="email" placeholder="admin@perusahaan.com" autocomplete="username" required />
-              <label class="form-label" for="adminPassword">Password</label><input class="field" id="adminPassword" name="password" type="password" placeholder="Masukkan password" autocomplete="current-password" required />
-              <button type="submit" class="primary-btn" id="loginBtn">Masuk ke panel admin</button>
-            </form>
-            <button type="button" class="outline-btn hidden" id="demoAdminBtn" style="width:100%;margin-top:10px">Buka simulasi admin (demo)</button>
-            <div id="loginFeedback" class="hidden" style="margin-top:13px"></div>
-          </div>
-        </div>
-
-        <div id="adminDashboard" class="hidden">
-          <div class="admin-header"><div><p class="eyebrow">Pusat operasional</p><h1>Antrean cetak</h1><p class="subheading">Kelola pengajuan dari mitra, isi jumlah stiker, lalu cetak. Pesanan baru akan muncul otomatis jika Firebase sudah aktif.</p></div><div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap"><span id="databaseStatus" class="printer-status"><span class="dot"></span><span>Memeriksa database</span></span><button class="outline-btn mini-btn" id="logoutBtn" type="button">Keluar</button></div></div>
-          <div id="adminDemoBanner" class="notice warning hidden"><span>⚠</span><div><strong>Simulasi lokal aktif.</strong> Data hanya ada di browser/perangkat ini, bukan database online.</div></div>
-          <div class="stats-grid">
-            <div class="panel stat-card"><div class="stat-label">Menunggu diproses</div><div class="stat-value" id="statPending">0</div><div class="stat-foot">Pesanan baru dari mitra</div></div>
-            <div class="panel stat-card"><div class="stat-label">Perlu konfirmasi</div><div class="stat-value" id="statConfirm">0</div><div class="stat-foot">Dialog cetak sudah ditutup</div></div>
-            <div class="panel stat-card"><div class="stat-label">Selesai</div><div class="stat-value" id="statDone">0</div><div class="stat-foot">Dikonfirmasi admin</div></div>
-          </div>
-          <section class="panel utility-panel">
-            <div class="utility-top">
-              <div><div class="utility-title">Koneksi printer thermal</div><div class="utility-copy">Printer CODESHOP CB-199BT menggunakan kabel USB. Website tidak dapat membaca status kabel/printer secara universal. Gunakan cetak uji, lalu tandai siap setelah printer benar-benar terhubung dan merespons.</div></div>
-              <div id="printerStatus" class="printer-status"><span class="dot"></span><span>Belum dikonfirmasi</span></div>
-            </div>
-            <div class="utility-controls">
-              <label for="labelSize" class="form-label" style="margin:0;font-size:11px">Ukuran stiker</label>
-              <select id="labelSize" class="small-select" aria-label="Ukuran stiker"><option value="40x30">40 × 30 mm</option><option value="50x30" selected>50 × 30 mm</option><option value="50x25">50 × 25 mm</option><option value="60x40">60 × 40 mm</option><option value="70x50">70 × 50 mm</option></select>
-              <button type="button" id="testPrintBtn" class="outline-btn mini-btn">Cetak stiker uji</button>
-              <button type="button" id="printerReadyBtn" class="primary-btn mini-btn">Tandai printer siap</button>
-            </div>
-          </section>
-          <div class="orders-toolbar"><h2>Daftar pesanan</h2><div class="filter-pills" id="filterPills"><button type="button" class="filter-btn active" data-filter="all">Semua</button><button type="button" class="filter-btn" data-filter="pending">Menunggu</button><button type="button" class="filter-btn" data-filter="confirm">Perlu konfirmasi</button><button type="button" class="filter-btn" data-filter="done">Selesai</button></div></div>
-          <div id="ordersList" class="orders-list"></div>
-          <div class="notice info" style="margin-top:18px;margin-bottom:0"><span>ⓘ</span><div>Setelah dialog cetak ditutup, sistem hanya bisa mengetahui dialognya selesai—bukan memastikan stiker benar-benar keluar. Periksa hasilnya, lalu tekan <strong>Tandai selesai</strong>. Pilih ukuran kertas yang sama dengan label fisik di pengaturan printer/Chrome dan matikan header/footer browser saat mencetak.</div></div>
-          <div class="footer-note"><span>Abba Bento · Admin barcode sticker</span><span>Data pesanan realtime melalui Firebase</span></div>
-        </div>
-      </section>
     </main>
   </div>
-
   <div id="printRoot" aria-hidden="true"></div>
   <div class="toast-region" id="toastRegion" aria-live="polite"></div>
 
-  <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.6/dist/JsBarcode.all.min.js"></script>
   <script type="module">
     import { initializeApp } from 'https://www.gstatic.com/firebasejs/11.10.0/firebase-app.js';
-    import { getDatabase, ref, push, set, onValue, update, get } from 'https://www.gstatic.com/firebasejs/11.10.0/firebase-database.js';
-    import { getAuth, onAuthStateChanged, signInWithEmailAndPassword, signOut } from 'https://www.gstatic.com/firebasejs/11.10.0/firebase-auth.js';
+    import { getDatabase, ref, push, set } from 'https://www.gstatic.com/firebasejs/11.10.0/firebase-database.js';
 
-    // Ganti nilai di bawah menggunakan Firebase web app config milikmu.
+    // Masukkan konfigurasi Firebase yang sama dengan file admin.html.
     const firebaseConfig = {
       apiKey: 'ISI_API_KEY_FIREBASE',
       authDomain: 'ISI_PROJECT_ID.firebaseapp.com',
@@ -257,28 +205,16 @@
 
     const $ = (id) => document.getElementById(id);
     const firebaseConfigured = Object.values(firebaseConfig).every(v => typeof v === 'string' && v.trim() && !v.startsWith('ISI_'));
-    let app = null, db = null, auth = null, currentUser = null;
-    let adminMode = false, demoMode = !firebaseConfigured, orders = [], activeFilter = 'all', detachOrders = null;
-    let activePrintJob = null;
-    const qtyDrafts = Object.create(null);
+    let app = null, db = null;
+    let demoMode = !firebaseConfigured;
     const DEMO_KEY = 'abbaBarcodeDemoOrders_v1';
-    const PRINTER_KEY = 'abbaBarcodePrinterReady_v1';
 
-    const esc = (value) => String(value ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
     const menuCode = (name) => {
-      // Kode konsisten untuk nama menu yang sama persis (setelah dinormalisasi).
       const normalized = String(name).normalize('NFKC').trim().toLowerCase().replace(/\s+/g, ' ');
       let hash = 2166136261;
       for (let i = 0; i < normalized.length; i++) { hash ^= normalized.charCodeAt(i); hash = Math.imul(hash, 16777619); }
       return 'AB' + (hash >>> 0).toString(16).toUpperCase().padStart(8, '0');
     };
-    const formatDate = (timestamp) => {
-      if (!timestamp) return 'Waktu tidak tersedia';
-      try { return new Intl.DateTimeFormat('id-ID', {dateStyle:'medium', timeStyle:'short'}).format(new Date(Number(timestamp))); }
-      catch { return new Date(Number(timestamp)).toLocaleString('id-ID'); }
-    };
-    const statusKind = (status) => status === 'completed' ? 'done' : (status === 'needs_confirmation' ? 'confirm' : 'pending');
-    const statusLabel = (status) => status === 'completed' ? 'Selesai' : (status === 'needs_confirmation' ? 'Perlu konfirmasi' : 'Menunggu');
     const showToast = (message, isError=false) => {
       const toast = document.createElement('div'); toast.className = 'toast' + (isError ? ' error' : ''); toast.textContent = message;
       $('toastRegion').appendChild(toast); window.setTimeout(() => toast.remove(), 4400);
@@ -288,127 +224,49 @@
       const icon = document.createElement('span'); icon.textContent = kind === 'error' ? '⚠' : (kind === 'success' ? '✓' : 'ⓘ');
       const text = document.createElement('div'); text.textContent = message; target.append(icon, text);
     };
-    const setDbBadge = (text, ready=false) => {
-      $('databaseStatus').className = 'printer-status' + (ready ? ' ready' : '');
-      $('databaseStatus').replaceChildren(); const dot = document.createElement('span'); dot.className = 'dot';
-      const label = document.createElement('span'); label.textContent = text; $('databaseStatus').append(dot,label);
-    };
 
     if (firebaseConfigured) {
-      try {
-        app = initializeApp(firebaseConfig); db = getDatabase(app); auth = getAuth(app);
-        onAuthStateChanged(auth, user => { currentUser = user; });
-      } catch (error) {
-        console.error(error); showToast('Firebase gagal diinisialisasi. Periksa konfigurasi Firebase.', true);
-      }
+      try { app = initializeApp(firebaseConfig); db = getDatabase(app); }
+      catch (error) { console.error(error); showToast('Firebase gagal diinisialisasi. Periksa konfigurasi Firebase.', true); }
     } else {
-      $('demoBanner').classList.remove('hidden'); $('adminConfigNotice').classList.remove('hidden'); $('demoAdminBtn').classList.remove('hidden');
+      $('demoBanner').classList.remove('hidden');
     }
 
     function getDemoOrders() {
       try { const parsed = JSON.parse(localStorage.getItem(DEMO_KEY) || '[]'); return Array.isArray(parsed) ? parsed : []; }
       catch { return []; }
     }
-    function saveDemoOrders() {
+    function saveDemoOrders(orders) {
       try { localStorage.setItem(DEMO_KEY, JSON.stringify(orders)); return true; }
       catch { showToast('Browser tidak mengizinkan penyimpanan lokal.', true); return false; }
     }
-    function setDemoDbBadge() { setDbBadge('Demo lokal · bukan online', false); }
-    function setPartnerView() {
-      adminMode = false; $('partnerView').classList.remove('hidden'); $('adminView').classList.add('hidden');
-    }
-    function setAdminView() {
-      adminMode = true; $('partnerView').classList.add('hidden'); $('adminView').classList.remove('hidden');
-    }
-    function showLogin() {
-      $('adminLoginView').classList.remove('hidden'); $('adminDashboard').classList.add('hidden');
-      if (demoMode) { $('demoAdminBtn').classList.remove('hidden'); $('adminConfigNotice').classList.remove('hidden'); }
-      else { $('demoAdminBtn').classList.add('hidden'); $('adminConfigNotice').classList.add('hidden'); }
-    }
-    function showDashboard() {
-      $('adminLoginView').classList.add('hidden'); $('adminDashboard').classList.remove('hidden');
-      if (demoMode) { $('adminDemoBanner').classList.remove('hidden'); setDemoDbBadge(); orders = getDemoOrders(); renderOrders(); }
-      else { $('adminDemoBanner').classList.add('hidden'); listenForOrders(); }
-      updatePrinterStatus();
-    }
-    async function checkAdmin(uid) {
-      try { const snap = await get(ref(db, 'admins/' + uid)); return snap.exists() && snap.val() === true; }
-      catch (error) { console.error(error); throw error; }
-    }
-    function listenForOrders() {
-      if (detachOrders) { detachOrders(); detachOrders = null; }
-      setDbBadge('Menghubungkan…', false);
-      detachOrders = onValue(ref(db, 'orders'), snapshot => {
-        const value = snapshot.val() || {};
-        orders = Object.entries(value).map(([id, order]) => ({ id, ...order })).sort((a,b) => Number(b.createdAt || 0) - Number(a.createdAt || 0));
-        setDbBadge('Firebase realtime aktif', true); renderOrders();
-      }, error => {
-        console.error(error); setDbBadge('Akses database gagal', false);
-        showToast('Tidak bisa membaca antrean Firebase. Periksa Security Rules dan UID admin.', true);
-      });
-    }
     async function createOrder(menuName) {
-      const item = { menuName, sku: menuCode(menuName), status:'pending', createdAt:Date.now() };
+      const item = { menuName, sku: menuCode(menuName), status: 'pending', createdAt: Date.now() };
       if (demoMode) {
-        orders = getDemoOrders(); item.id = 'demo-' + Date.now().toString(36) + Math.random().toString(36).slice(2,6);
-        orders.unshift(item); saveDemoOrders(); return item;
+        const orders = getDemoOrders();
+        item.id = 'demo-' + Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
+        orders.unshift(item);
+        if (!saveDemoOrders(orders)) throw new Error('Pesanan tidak bisa disimpan di browser ini.');
+        return item;
       }
       if (!db) throw new Error('Firebase belum berhasil dijalankan. Periksa konfigurasi.');
-      const newOrder = push(ref(db, 'orders')); await set(newOrder, item); return {id:newOrder.key, ...item};
+      const newOrder = push(ref(db, 'orders'));
+      await set(newOrder, item);
+      return { id: newOrder.key, ...item };
     }
-    async function updateOrder(orderId, patch) {
-      if (demoMode) {
-        orders = getDemoOrders(); const idx = orders.findIndex(o => o.id === orderId);
-        if (idx < 0) throw new Error('Pesanan demo tidak ditemukan.');
-        orders[idx] = {...orders[idx], ...patch}; saveDemoOrders(); renderOrders(); return;
-      }
-      await update(ref(db, 'orders/' + orderId), patch);
-    }
-
-    $('partnerNav').addEventListener('click', () => { setPartnerView(); });
-    $('adminNav').addEventListener('click', async () => {
-      setAdminView();
-      if (demoMode) { showLogin(); return; }
-      if (!currentUser) { showLogin(); return; }
-      try {
-        if (await checkAdmin(currentUser.uid)) showDashboard();
-        else { await signOut(auth); showLogin(); showToast('Akun ini belum diberi akses administrator.', true); }
-      } catch { showLogin(); showToast('Gagal memeriksa akses admin. Periksa aturan Firebase.', true); }
-    });
-    $('loginForm').addEventListener('submit', async (event) => {
-      event.preventDefault();
-      if (demoMode) { showToast('Simulasi lokal aktif. Gunakan tombol demo untuk masuk.'); return; }
-      const email = $('adminEmail').value.trim(), password = $('adminPassword').value;
-      $('loginBtn').disabled = true; $('loginBtn').textContent = 'Memeriksa akses…'; $('loginFeedback').classList.add('hidden');
-      try {
-        const credential = await signInWithEmailAndPassword(auth, email, password);
-        if (!(await checkAdmin(credential.user.uid))) {
-          await signOut(auth); showFeedback('loginFeedback', 'Akun berhasil login, tetapi UID belum terdaftar sebagai admin pada database.', 'error'); return;
-        }
-        showDashboard(); showToast('Login admin berhasil.');
-      } catch (error) {
-        console.error(error);
-        const message = error.code === 'auth/invalid-credential' || error.code === 'auth/wrong-password' || error.code === 'auth/user-not-found'
-          ? 'Email atau password tidak sesuai.'
-          : error.code === 'auth/too-many-requests' ? 'Terlalu banyak percobaan. Coba lagi nanti.' : 'Login gagal. Periksa koneksi, Firebase Authentication, dan konfigurasi.';
-        showFeedback('loginFeedback', message, 'error');
-      } finally { $('loginBtn').disabled = false; $('loginBtn').textContent = 'Masuk ke panel admin'; }
-    });
-    $('demoAdminBtn').addEventListener('click', () => { demoMode = true; showDashboard(); showToast('Simulasi admin lokal dibuka.'); });
-    $('logoutBtn').addEventListener('click', async () => {
-      if (detachOrders) { detachOrders(); detachOrders = null; }
-      if (!demoMode && auth) { try { await signOut(auth); } catch(e) { console.error(e); } }
-      setPartnerView(); showToast('Kamu telah keluar dari panel admin.');
-    });
 
     $('orderForm').addEventListener('submit', async (event) => {
-      event.preventDefault(); const field = $('menuName'); const menuName = field.value.trim().replace(/\s+/g,' ');
+      event.preventDefault();
+      const field = $('menuName');
+      const menuName = field.value.trim().replace(/\s+/g, ' ');
       if (!menuName) { field.focus(); return; }
       if (menuName.length > 80) { showToast('Nama menu maksimal 80 karakter.', true); return; }
-      $('submitOrder').disabled = true; $('submitOrder').innerHTML = '<span>…</span> Mengirim pengajuan';
+      $('submitOrder').disabled = true;
+      $('submitOrder').innerHTML = '<span>…</span> Mengirim pengajuan';
       $('partnerFeedback').classList.add('hidden');
       try {
-        const created = await createOrder(menuName); field.value = '';
+        const created = await createOrder(menuName);
+        field.value = '';
         showFeedback('partnerFeedback', 'Pengajuan berhasil dikirim. Kode referensi: ' + String(created.id).slice(-8).toUpperCase() + '. Admin akan memproses pesanan ini.', 'success');
         showToast('Pengajuan stiker berhasil dikirim.');
       } catch (error) {
@@ -417,137 +275,11 @@
           ? 'Pengajuan ditolak oleh aturan Firebase. Periksa Security Rules yang ada di panduan setup.'
           : 'Pengajuan gagal dikirim. Periksa koneksi internet dan konfigurasi Firebase.';
         showFeedback('partnerFeedback', message, 'error');
-      } finally { $('submitOrder').disabled = false; $('submitOrder').innerHTML = '<span>＋</span> Ajukan pencetakan'; }
-    });
-
-    function renderOrders() {
-      if (!$('ordersList')) return;
-      const pending = orders.filter(o => !o.status || o.status === 'pending').length;
-      const confirm = orders.filter(o => o.status === 'needs_confirmation').length;
-      const done = orders.filter(o => o.status === 'completed').length;
-      $('statPending').textContent = pending; $('statConfirm').textContent = confirm; $('statDone').textContent = done;
-      const filtered = orders.filter(o => activeFilter === 'all' || (activeFilter === 'pending' && (!o.status || o.status === 'pending')) || (activeFilter === 'confirm' && o.status === 'needs_confirmation') || (activeFilter === 'done' && o.status === 'completed'));
-      const root = $('ordersList'); root.replaceChildren();
-      if (!filtered.length) {
-        const empty = document.createElement('div'); empty.className = 'empty-state';
-        const icon = document.createElement('div'); icon.className = 'empty-icon'; icon.textContent = activeFilter === 'done' ? '✓' : '▤';
-        const strong = document.createElement('strong'); strong.textContent = activeFilter === 'all' ? 'Belum ada pesanan' : 'Tidak ada pesanan pada kategori ini';
-        const p = document.createElement('p'); p.textContent = activeFilter === 'all' ? 'Pengajuan dari mitra akan muncul di sini secara otomatis.' : 'Pesanan akan muncul di bagian ini ketika statusnya sesuai.';
-        empty.append(icon,strong,p); root.append(empty); return;
+      } finally {
+        $('submitOrder').disabled = false;
+        $('submitOrder').innerHTML = '<span>＋</span> Ajukan pencetakan';
       }
-      filtered.forEach(order => {
-        const card = document.createElement('article'); card.className = 'order-card';
-        const main = document.createElement('div'); main.className = 'order-main';
-        const overline = document.createElement('div'); overline.className = 'order-overline';
-        const status = document.createElement('span'); status.className = 'status-chip ' + statusKind(order.status); status.textContent = statusLabel(order.status);
-        const sku = document.createElement('span'); sku.className = 'sku-chip'; sku.textContent = order.sku || menuCode(order.menuName);
-        const date = document.createElement('span'); date.className = 'time-chip'; date.textContent = formatDate(order.createdAt);
-        overline.append(status,sku,date);
-        const name = document.createElement('div'); name.className = 'order-title'; name.textContent = order.menuName || '(Nama menu kosong)';
-        const meta = document.createElement('div'); meta.className = 'order-meta'; meta.textContent = 'Referensi: ' + String(order.id || '').slice(-8).toUpperCase() + (order.qty ? ' · Jumlah terakhir: ' + order.qty + ' stiker' : ' · Jumlah belum ditentukan');
-        main.append(overline,name,meta);
-        const actions = document.createElement('div'); actions.className = 'order-actions';
-        const qtyBox = document.createElement('label'); qtyBox.className = 'qty-box'; qtyBox.append(document.createTextNode('Jumlah'));
-        const qty = document.createElement('input'); qty.className = 'qty-input'; qty.type = 'number'; qty.min = '1'; qty.max = '500'; qty.step = '1'; qty.inputMode = 'numeric'; qty.setAttribute('aria-label','Jumlah stiker'); qty.value = qtyDrafts[order.id] ?? order.qty ?? 1;
-        qty.addEventListener('input', () => { qtyDrafts[order.id] = qty.value; }); qtyBox.append(qty);
-        const printBtn = document.createElement('button'); printBtn.type = 'button'; printBtn.className = 'primary-btn mini-btn';
-        printBtn.textContent = order.status === 'completed' || order.status === 'needs_confirmation' ? 'Cetak ulang' : 'Cetak';
-        printBtn.addEventListener('click', () => printOrder(order, qty.value));
-        actions.append(qtyBox,printBtn);
-        if (order.status === 'needs_confirmation') {
-          const doneBtn = document.createElement('button'); doneBtn.type = 'button'; doneBtn.className = 'outline-btn mini-btn'; doneBtn.textContent = 'Tandai selesai';
-          doneBtn.addEventListener('click', async () => { doneBtn.disabled = true; try { await updateOrder(order.id,{status:'completed',completedAt:Date.now()}); delete qtyDrafts[order.id]; showToast('Pesanan ditandai selesai.'); } catch(e){ console.error(e); showToast('Gagal memperbarui status pesanan.',true); doneBtn.disabled = false; } });
-          actions.append(doneBtn);
-        }
-        card.append(main,actions); root.append(card);
-      });
-    }
-    $('filterPills').addEventListener('click', (event) => {
-      const button = event.target.closest('[data-filter]'); if (!button) return;
-      activeFilter = button.dataset.filter;
-      document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.toggle('active', btn === button)); renderOrders();
     });
-
-    function currentLabelDimensions() {
-      const [width,height] = $('labelSize').value.split('x').map(Number); return {width,height};
-    }
-    function applyPrintDimensions() {
-      const {width,height} = currentLabelDimensions();
-      $('dynamicPrintStyle').textContent = `@page { size: ${width}mm ${height}mm; margin: 0; } @media print { .print-label { --label-width:${width}mm; --label-height:${height}mm; width:${width}mm!important; height:${height}mm!important; } }`;
-      document.documentElement.style.setProperty('--label-width', width + 'mm'); document.documentElement.style.setProperty('--label-height', height + 'mm');
-    }
-    function buildPrintLabel({name, sku, test=false}) {
-      const label = document.createElement('div'); label.className = 'print-label';
-      const title = document.createElement('div'); title.className = 'print-name'; title.textContent = name;
-      const svg = document.createElementNS('http://www.w3.org/2000/svg','svg'); svg.classList.add('print-barcode');
-      try { window.JsBarcode(svg, sku, {format:'CODE128', displayValue:false, margin:0, width:1.15, height:34, lineColor:'#000000', background:'#ffffff'}); }
-      catch (error) { console.error(error); throw new Error('Barcode tidak dapat dibuat. Periksa apakah pustaka barcode berhasil dimuat.'); }
-      const code = document.createElement('div'); code.className = 'print-code'; code.textContent = sku;
-      label.append(title,svg,code);
-      if (test) { const small = document.createElement('div'); small.className = 'print-small'; small.textContent = 'UJI PRINTER · ABBA BENTO'; label.append(small); }
-      return label;
-    }
-    function openPrintDialog() {
-      applyPrintDimensions();
-      // Browser print dialog menyerahkan pekerjaan ke driver printer yang dipilih di komputer.
-      window.requestAnimationFrame(() => window.print());
-    }
-    async function printOrder(order, rawQty) {
-      const qty = Number.parseInt(rawQty,10);
-      if (!Number.isInteger(qty) || qty < 1 || qty > 500) { showToast('Jumlah stiker harus 1 sampai 500.', true); return; }
-      if (!window.JsBarcode) { showToast('Pustaka barcode belum termuat. Periksa koneksi internet lalu muat ulang.', true); return; }
-      const sku = order.sku || menuCode(order.menuName);
-      const printRoot = $('printRoot'); printRoot.replaceChildren();
-      try {
-        for (let i=0; i<qty; i++) printRoot.append(buildPrintLabel({name:order.menuName,sku}));
-      } catch (error) { showToast(error.message || 'Gagal menyiapkan barcode.', true); return; }
-      try {
-        await updateOrder(order.id,{qty,status:'needs_confirmation',printDialogOpenedAt:Date.now(),sku});
-        qtyDrafts[order.id] = String(qty);
-        activePrintJob = {orderId:order.id, source: demoMode ? 'demo' : 'firebase'};
-        openPrintDialog();
-      } catch (error) {
-        console.error(error); printRoot.replaceChildren(); showToast('Status pesanan gagal disimpan. Cetak dibatalkan agar data tidak tertinggal.',true);
-      }
-    }
-    window.addEventListener('afterprint', async () => {
-      const job = activePrintJob; activePrintJob = null;
-      if (!job) { $('printRoot').replaceChildren(); return; }
-      if (job.test) {
-        $('printRoot').replaceChildren();
-        showToast('Dialog cetak uji ditutup. Periksa apakah satu stiker uji benar-benar keluar.');
-        return;
-      }
-      try { await updateOrder(job.orderId,{status:'needs_confirmation',printDialogClosedAt:Date.now()}); showToast('Dialog cetak ditutup. Periksa hasil printer, lalu tandai selesai.'); }
-      catch(error) { console.error(error); showToast('Dialog ditutup, tetapi status database gagal diperbarui.',true); }
-      $('printRoot').replaceChildren();
-    });
-
-    function updatePrinterStatus() {
-      let isReady = false; try { isReady = localStorage.getItem(PRINTER_KEY) === 'true'; } catch {}
-      $('printerStatus').className = 'printer-status' + (isReady ? ' ready' : ''); $('printerStatus').replaceChildren();
-      const dot = document.createElement('span'); dot.className = 'dot';
-      const text = document.createElement('span'); text.textContent = isReady ? 'Siap · konfirmasi manual' : 'Belum dikonfirmasi';
-      $('printerStatus').append(dot,text);
-      $('printerReadyBtn').textContent = isReady ? 'Batalkan status siap' : 'Tandai printer siap';
-      $('printerReadyBtn').className = isReady ? 'outline-btn mini-btn' : 'primary-btn mini-btn';
-    }
-    $('printerReadyBtn').addEventListener('click', () => {
-      let current = false; try { current = localStorage.getItem(PRINTER_KEY) === 'true'; localStorage.setItem(PRINTER_KEY, current ? 'false' : 'true'); }
-      catch { showToast('Browser menolak menyimpan status printer.',true); return; }
-      updatePrinterStatus(); showToast(current ? 'Status printer diubah menjadi belum dikonfirmasi.' : 'Printer ditandai siap berdasarkan konfirmasi manual.');
-    });
-    $('testPrintBtn').addEventListener('click', () => {
-      if (!window.JsBarcode) { showToast('Pustaka barcode belum termuat. Periksa koneksi internet.',true); return; }
-      const root = $('printRoot'); root.replaceChildren();
-      try { root.append(buildPrintLabel({name:'TEST PRINTER',sku:'ABTEST001',test:true})); }
-      catch (error) { showToast(error.message || 'Gagal membuat stiker uji.',true); return; }
-      activePrintJob = {test:true}; openPrintDialog(); showToast('Dialog cetak dibuka. Pilih CODESHOP CB-199BT dan cetak satu label uji.');
-    });
-    $('labelSize').addEventListener('change', applyPrintDimensions);
-
-    // Tampilan mitra selalu menjadi halaman awal.
-    setPartnerView(); applyPrintDimensions(); updatePrinterStatus();
   </script>
 </body>
 </html>
