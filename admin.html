@@ -114,6 +114,17 @@
     .empty-icon{width:46px;height:46px;border-radius:15px;background:#edf5ef;color:#3a7457;margin:0 auto 13px;display:grid;place-items:center;font-size:20px}
     .empty-state strong{display:block;font-size:14px;margin-bottom:5px}
     .empty-state p{font-size:12px;color:var(--muted);margin:0}
+    .catalog-panel{margin-bottom:20px;padding:21px}
+    .catalog-panel-head{display:flex;align-items:flex-start;justify-content:space-between;gap:18px;margin-bottom:15px}
+    .catalog-panel-head h2{margin-bottom:6px}
+    .catalog-import-form{display:grid;gap:11px}
+    .catalog-import-fields{display:flex;align-items:flex-end;gap:9px;flex-wrap:wrap}
+    .file-field-wrap{display:grid;gap:7px;flex:1;min-width:220px}
+    .file-field{width:100%;border:1px solid var(--line);background:#fff;border-radius:11px;padding:10px;font-size:12px;color:var(--ink)}
+    .catalog-status{font-size:12px;line-height:1.5;color:var(--muted)}
+    .catalog-status strong{color:var(--ink)}
+    .size-lock{display:inline-flex;align-items:center;border:1px solid #d3e5da;background:#edf7f0;color:#225841;padding:9px 12px;border-radius:10px;font-size:12px;font-weight:850;white-space:nowrap}
+    .security-note{margin-bottom:18px}
     .hidden{display:none!important}
     .toast-region{position:fixed;right:18px;bottom:18px;z-index:30;display:grid;gap:9px;width:min(360px,calc(100vw - 36px));pointer-events:none}
     .toast{padding:13px 15px;border-radius:12px;color:#fff;background:#183d2f;box-shadow:0 10px 25px #11251d2b;font-size:12px;line-height:1.5;animation:toast-in .18s ease-out}
@@ -134,7 +145,7 @@
       body *{visibility:hidden!important}
       #printRoot,#printRoot *{visibility:visible!important}
       #printRoot{display:block!important;position:absolute!important;left:0!important;top:0!important;width:100%!important;margin:0!important;padding:0!important}
-      .print-label{box-sizing:border-box!important;display:flex!important;flex-direction:column!important;align-items:center!important;justify-content:center!important;text-align:center!important;overflow:hidden!important;margin:0!important;padding:1.3mm 1.5mm!important;width:var(--label-width,50mm)!important;height:var(--label-height,30mm)!important;break-after:page!important;page-break-after:always!important;color:#000!important;background:#fff!important}
+      .print-label{box-sizing:border-box!important;display:flex!important;flex-direction:column!important;align-items:center!important;justify-content:center!important;text-align:center!important;overflow:hidden!important;margin:0!important;padding:1.3mm 1.5mm!important;width:40mm!important;height:30mm!important;break-after:page!important;page-break-after:always!important;color:#000!important;background:#fff!important}
       .print-label:last-child{break-after:auto!important;page-break-after:auto!important}
       .print-name{font-family:Arial,sans-serif!important;font-size:9pt!important;font-weight:700!important;line-height:1.12!important;max-height:7mm!important;overflow:hidden!important;overflow-wrap:anywhere!important;width:100%!important;margin:0 0 1mm!important;color:#000!important}
       .print-barcode{display:block!important;max-width:100%!important;max-height:11mm!important;height:auto!important;width:auto!important;margin:0 auto!important}
@@ -154,25 +165,22 @@
     </header>
     <main class="container">
       <section id="adminView">
-        <div id="adminLoginView">
-          <div class="admin-header"><div><p class="eyebrow">Area terbatas</p><h1>Panel admin</h1><p class="subheading">Masuk untuk mengelola antrean pesanan, menentukan jumlah label, dan mencetak barcode.</p></div><div class="hero-tag"><span class="dot"></span> Admin workstation</div></div>
-          <div id="adminConfigNotice" class="notice warning hidden"><span>⚠</span><div>Firebase belum dikonfigurasi. Kamu bisa mencoba antarmuka dengan simulasi lokal, tetapi pesanan tidak akan tersinkron dengan HP mitra.</div></div>
-          <div class="panel login-card">
-            <div class="side-icon" style="margin-bottom:18px"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><rect x="4" y="10" width="16" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3M12 14v3"/></svg></div>
-            <h2>Login administrator</h2><p class="subheading" style="font-size:12px">Gunakan akun admin Firebase yang sudah diberi akses.</p>
-            <form id="loginForm">
-              <label class="form-label" for="adminEmail">Email admin</label><input class="field" id="adminEmail" name="email" type="email" placeholder="admin@perusahaan.com" autocomplete="username" required />
-              <label class="form-label" for="adminPassword">Password</label><input class="field" id="adminPassword" name="password" type="password" placeholder="Masukkan password" autocomplete="current-password" required />
-              <button type="submit" class="primary-btn" id="loginBtn">Masuk ke panel admin</button>
-            </form>
-            <button type="button" class="outline-btn hidden" id="demoAdminBtn" style="width:100%;margin-top:10px">Buka simulasi admin (demo)</button>
-            <div id="loginFeedback" class="hidden" style="margin-top:13px"></div>
-          </div>
-        </div>
-
-        <div id="adminDashboard" class="hidden">
-          <div class="admin-header"><div><p class="eyebrow">Pusat operasional</p><h1>Antrean cetak</h1><p class="subheading">Kelola pengajuan dari mitra, isi jumlah stiker, lalu cetak. Pesanan baru akan muncul otomatis jika Firebase sudah aktif.</p></div><div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap"><span id="databaseStatus" class="printer-status"><span class="dot"></span><span>Memeriksa database</span></span><button class="outline-btn mini-btn" id="logoutBtn" type="button">Keluar</button></div></div>
+          <div class="admin-header"><div><p class="eyebrow">Pusat operasional</p><h1>Antrean cetak</h1><p class="subheading">Impor katalog dari Excel, kelola pengajuan dari mitra, isi jumlah stiker, lalu cetak barcode.</p></div><div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap"><span id="databaseStatus" class="printer-status"><span class="dot"></span><span>Memeriksa database</span></span><span class="hero-tag">Admin workstation</span></div></div>
+          <div id="adminConfigNotice" class="notice warning hidden"><span>⚠</span><div>Firebase belum dikonfigurasi. Kamu bisa mencoba antarmuka dengan simulasi lokal, tetapi data belum tersinkron ke perangkat lain.</div></div>
           <div id="adminDemoBanner" class="notice warning hidden"><span>⚠</span><div><strong>Simulasi lokal aktif.</strong> Data hanya ada di browser/perangkat ini, bukan database online.</div></div>
+          <div class="notice warning security-note"><span>⚠</span><div><strong>Admin tanpa login.</strong> Sesuai pengaturan ini, siapa pun yang mengetahui alamat halaman admin dapat mencoba mengubah katalog dan antrean. Bagikan URL admin hanya kepada petugas yang berwenang.</div></div>
+          <section class="panel catalog-panel">
+            <div class="catalog-panel-head"><div><p class="eyebrow">Sumber data barcode</p><h2>Import katalog Excel</h2><p class="subheading" style="font-size:12px">Format kolom: <strong>nama mitra | nama menu | kode</strong>. File Excel baru akan menggantikan katalog yang saat ini tersimpan.</p></div></div>
+            <form id="catalogImportForm" class="catalog-import-form">
+              <div class="catalog-import-fields">
+                <label class="file-field-wrap form-label" for="excelFile">Pilih file Excel (.xlsx, .xls) atau CSV<input class="file-field" id="excelFile" name="excelFile" type="file" accept=".xlsx,.xls,.csv,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.ms-excel,text/csv" required /></label>
+                <button type="submit" class="primary-btn mini-btn" id="importCatalogBtn">Import katalog</button>
+                <button type="button" class="outline-btn mini-btn" id="downloadTemplateBtn">Unduh template Excel</button>
+              </div>
+              <div id="catalogStatus" class="catalog-status" role="status" aria-live="polite">Katalog belum dimuat.</div>
+              <p class="utility-copy">Baris pertama harus berisi judul kolom. Data yang kosong atau kode yang tidak valid akan ditolak sebelum import, supaya kode barcode tidak tertukar.</p>
+            </form>
+          </section>
           <div class="stats-grid">
             <div class="panel stat-card"><div class="stat-label">Menunggu diproses</div><div class="stat-value" id="statPending">0</div><div class="stat-foot">Pesanan baru dari mitra</div></div>
             <div class="panel stat-card"><div class="stat-label">Perlu konfirmasi</div><div class="stat-value" id="statConfirm">0</div><div class="stat-foot">Dialog cetak sudah ditutup</div></div>
@@ -184,17 +192,16 @@
               <div id="printerStatus" class="printer-status"><span class="dot"></span><span>Belum dikonfirmasi</span></div>
             </div>
             <div class="utility-controls">
-              <label for="labelSize" class="form-label" style="margin:0;font-size:11px">Ukuran stiker</label>
-              <select id="labelSize" class="small-select" aria-label="Ukuran stiker"><option value="40x30">40 × 30 mm</option><option value="50x30" selected>50 × 30 mm</option><option value="50x25">50 × 25 mm</option><option value="60x40">60 × 40 mm</option><option value="70x50">70 × 50 mm</option></select>
+              <span class="form-label" style="margin:0;font-size:11px">Ukuran stiker</span>
+              <span class="size-lock">40 × 30 mm · tetap</span>
               <button type="button" id="testPrintBtn" class="outline-btn mini-btn">Cetak stiker uji</button>
               <button type="button" id="printerReadyBtn" class="primary-btn mini-btn">Tandai printer siap</button>
             </div>
           </section>
           <div class="orders-toolbar"><h2>Daftar pesanan</h2><div class="filter-pills" id="filterPills"><button type="button" class="filter-btn active" data-filter="all">Semua</button><button type="button" class="filter-btn" data-filter="pending">Menunggu</button><button type="button" class="filter-btn" data-filter="confirm">Perlu konfirmasi</button><button type="button" class="filter-btn" data-filter="done">Selesai</button></div></div>
           <div id="ordersList" class="orders-list"></div>
-          <div class="notice info" style="margin-top:18px;margin-bottom:0"><span>ⓘ</span><div>Setelah dialog cetak ditutup, sistem hanya bisa mengetahui dialognya selesai—bukan memastikan stiker benar-benar keluar. Periksa hasilnya, lalu tekan <strong>Tandai selesai</strong>. Pilih ukuran kertas yang sama dengan label fisik di pengaturan printer/Chrome dan matikan header/footer browser saat mencetak.</div></div>
+          <div class="notice info" style="margin-top:18px;margin-bottom:0"><span>ⓘ</span><div>Setelah dialog cetak ditutup, sistem hanya bisa mengetahui dialognya selesai—bukan memastikan stiker benar-benar keluar. Periksa hasilnya, lalu tekan <strong>Tandai selesai</strong>. Ukuran label sistem dikunci pada 40 × 30 mm. Pastikan driver printer memakai ukuran kertas 40 × 30 mm dan matikan header/footer browser saat mencetak.</div></div>
           <div class="footer-note"><span>Abba Bento · Admin barcode sticker</span><span>Data pesanan realtime melalui Firebase</span></div>
-        </div>
       </section>
     </main>
   </div>
@@ -202,12 +209,12 @@
   <div class="toast-region" id="toastRegion" aria-live="polite"></div>
 
   <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.6/dist/JsBarcode.all.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
   <script type="module">
     import { initializeApp } from 'https://www.gstatic.com/firebasejs/11.10.0/firebase-app.js';
-    import { getDatabase, ref, onValue, update, get } from 'https://www.gstatic.com/firebasejs/11.10.0/firebase-database.js';
-    import { getAuth, onAuthStateChanged, signInWithEmailAndPassword, signOut } from 'https://www.gstatic.com/firebasejs/11.10.0/firebase-auth.js';
+    import { getDatabase, ref, onValue, update, set } from 'https://www.gstatic.com/firebasejs/11.10.0/firebase-database.js';
 
-    // Konfigurasi harus sama dengan yang digunakan di index.html.
+    // Harus sama dengan firebaseConfig pada index.html.
     const firebaseConfig = {
       apiKey: 'ISI_API_KEY_FIREBASE',
       authDomain: 'ISI_PROJECT_ID.firebaseapp.com',
@@ -218,14 +225,16 @@
 
     const $ = (id) => document.getElementById(id);
     const firebaseConfigured = Object.values(firebaseConfig).every(v => typeof v === 'string' && v.trim() && !v.startsWith('ISI_'));
-    let app = null, db = null, auth = null, currentUser = null;
-    let demoMode = !firebaseConfigured, orders = [], activeFilter = 'all', detachOrders = null;
-    let activePrintJob = null, dashboardUid = '';
+    let app = null, db = null;
+    let demoMode = !firebaseConfigured, orders = [], activeFilter = 'all', detachOrders = null, detachCatalog = null;
+    let activePrintJob = null, catalogItems = [];
     const qtyDrafts = Object.create(null);
     const DEMO_KEY = 'abbaBarcodeDemoOrders_v1';
+    const DEMO_CATALOG_KEY = 'abbaBarcodeCatalog_v1';
     const PRINTER_KEY = 'abbaBarcodePrinterReady_v1';
 
     const menuCode = (name) => {
+      // Fallback untuk pesanan lama yang belum mempunyai kode katalog.
       const normalized = String(name).normalize('NFKC').trim().toLowerCase().replace(/\s+/g, ' ');
       let hash = 2166136261;
       for (let i = 0; i < normalized.length; i++) { hash ^= normalized.charCodeAt(i); hash = Math.imul(hash, 16777619); }
@@ -242,11 +251,6 @@
       const toast = document.createElement('div'); toast.className = 'toast' + (isError ? ' error' : ''); toast.textContent = message;
       $('toastRegion').appendChild(toast); window.setTimeout(() => toast.remove(), 4400);
     };
-    const showFeedback = (targetId, message, kind='info') => {
-      const target = $(targetId); target.className = 'notice ' + kind; target.replaceChildren();
-      const icon = document.createElement('span'); icon.textContent = kind === 'error' ? '⚠' : (kind === 'success' ? '✓' : 'ⓘ');
-      const text = document.createElement('div'); text.textContent = message; target.append(icon, text);
-    };
     const setDbBadge = (text, ready=false) => {
       $('databaseStatus').className = 'printer-status' + (ready ? ' ready' : '');
       $('databaseStatus').replaceChildren();
@@ -254,42 +258,22 @@
       const label = document.createElement('span'); label.textContent = text;
       $('databaseStatus').append(dot, label);
     };
-
-    if (firebaseConfigured) {
-      try {
-        app = initializeApp(firebaseConfig); db = getDatabase(app); auth = getAuth(app);
-        onAuthStateChanged(auth, async user => {
-          currentUser = user;
-          if (!user) {
-            dashboardUid = '';
-            if (detachOrders) { detachOrders(); detachOrders = null; }
-            if (!demoMode) showLogin();
-            return;
-          }
-          if (demoMode || user.uid === dashboardUid) return;
-          try {
-            if (await checkAdmin(user.uid)) {
-              dashboardUid = user.uid;
-              if ($('adminDashboard').classList.contains('hidden')) showDashboard();
-            } else {
-              await signOut(auth);
-              showLogin();
-              showToast('Akun ini belum diberi akses administrator.', true);
-            }
-          } catch (error) {
-            console.error(error); showLogin(); showToast('Gagal memeriksa akses admin. Periksa aturan Firebase.', true);
-          }
-        });
-      } catch (error) {
-        console.error(error);
-        $('adminConfigNotice').classList.remove('hidden');
-        showToast('Firebase gagal diinisialisasi. Periksa konfigurasi Firebase.', true);
-      }
-    } else {
-      $('adminConfigNotice').classList.remove('hidden');
-      $('demoAdminBtn').classList.remove('hidden');
+    const normalizeText = value => String(value ?? '').normalize('NFKC').trim().toLocaleLowerCase('id-ID').replace(/\s+/g,' ');
+    function updateCatalogStatus(message, isError=false) {
+      $('catalogStatus').replaceChildren();
+      const strong = document.createElement('strong'); strong.textContent = isError ? 'Gagal: ' : '';
+      const span = document.createElement('span'); span.textContent = message;
+      $('catalogStatus').append(strong, span);
     }
-
+    function normalizeCatalog(value) {
+      const rawItems = Array.isArray(value) ? value.map((item, i) => [String(i), item]) : Object.entries(value || {});
+      return rawItems.map(([id, row]) => ({
+        id: String(row?.id || id),
+        partnerName: String(row?.partnerName ?? row?.namaMitra ?? row?.['nama mitra'] ?? '').trim(),
+        menuName: String(row?.menuName ?? row?.namaMenu ?? row?.['nama menu'] ?? '').trim(),
+        code: String(row?.code ?? row?.sku ?? row?.kode ?? '').trim()
+      })).filter(item => item.partnerName && item.menuName && item.code);
+    }
     function getDemoOrders() {
       try { const parsed = JSON.parse(localStorage.getItem(DEMO_KEY) || '[]'); return Array.isArray(parsed) ? parsed : []; }
       catch { return []; }
@@ -298,29 +282,27 @@
       try { localStorage.setItem(DEMO_KEY, JSON.stringify(orders)); return true; }
       catch { showToast('Browser tidak mengizinkan penyimpanan lokal.', true); return false; }
     }
-    function showLogin() {
-      $('adminLoginView').classList.remove('hidden');
-      $('adminDashboard').classList.add('hidden');
-      if (demoMode) { $('demoAdminBtn').classList.remove('hidden'); $('adminConfigNotice').classList.remove('hidden'); }
-      else { $('demoAdminBtn').classList.add('hidden'); }
+    function getDemoCatalog() {
+      try { return normalizeCatalog(JSON.parse(localStorage.getItem(DEMO_CATALOG_KEY) || '[]')); }
+      catch { return []; }
     }
-    function showDashboard() {
-      $('adminLoginView').classList.add('hidden');
-      $('adminDashboard').classList.remove('hidden');
-      if (demoMode) {
-        $('adminDemoBanner').classList.remove('hidden');
-        setDbBadge('Demo lokal · bukan online', false);
-        orders = getDemoOrders(); renderOrders();
-      } else {
-        $('adminDemoBanner').classList.add('hidden');
-        listenForOrders();
+    function setCatalog(items) {
+      catalogItems = normalizeCatalog(items);
+      updateCatalogStatus(catalogItems.length ? catalogItems.length + ' data menu/mitra siap dipakai untuk pencarian mitra.' : 'Belum ada katalog. Pilih file Excel untuk memulai.');
+    }
+
+    if (firebaseConfigured) {
+      try { app = initializeApp(firebaseConfig); db = getDatabase(app); }
+      catch (error) {
+        console.error(error); $('adminConfigNotice').classList.remove('hidden');
+        showToast('Firebase gagal diinisialisasi. Periksa konfigurasi Firebase.', true);
       }
-      updatePrinterStatus();
+    } else {
+      $('adminConfigNotice').classList.remove('hidden');
+      $('adminDemoBanner').classList.remove('hidden');
+      setDbBadge('Demo lokal · bukan online', false);
     }
-    async function checkAdmin(uid) {
-      const snap = await get(ref(db, 'admins/' + uid));
-      return snap.exists() && snap.val() === true;
-    }
+
     function listenForOrders() {
       if (detachOrders) { detachOrders(); detachOrders = null; }
       setDbBadge('Menghubungkan…', false);
@@ -330,7 +312,16 @@
         setDbBadge('Firebase realtime aktif', true); renderOrders();
       }, error => {
         console.error(error); setDbBadge('Akses database gagal', false);
-        showToast('Tidak bisa membaca antrean Firebase. Periksa Security Rules dan UID admin.', true);
+        showToast('Tidak bisa membaca antrean Firebase. Periksa Security Rules.', true);
+      });
+    }
+    function listenForCatalog() {
+      if (detachCatalog) { detachCatalog(); detachCatalog = null; }
+      detachCatalog = onValue(ref(db, 'stickerCatalog'), snapshot => {
+        setCatalog(snapshot.val() || {});
+      }, error => {
+        console.error(error); updateCatalogStatus('Tidak bisa membaca katalog Firebase. Periksa Security Rules.', true);
+        showToast('Gagal membaca katalog Firebase.', true);
       });
     }
     async function updateOrder(orderId, patch) {
@@ -340,41 +331,97 @@
         if (idx < 0) throw new Error('Pesanan demo tidak ditemukan.');
         orders[idx] = { ...orders[idx], ...patch };
         if (!saveDemoOrders()) throw new Error('Data pesanan gagal disimpan.');
-        renderOrders();
-        return;
+        renderOrders(); return;
       }
+      if (!db) throw new Error('Firebase belum siap.');
       await update(ref(db, 'orders/' + orderId), patch);
     }
 
-    $('loginForm').addEventListener('submit', async (event) => {
+    function normalizeHeader(value) {
+      return String(value ?? '').normalize('NFKC').trim().toLocaleLowerCase('id-ID').replace(/[._-]+/g,' ').replace(/\s+/g,' ');
+    }
+    function splitPipeRows(rows) {
+      if (!rows.some(row => row.length === 1 && String(row[0] ?? '').includes('|'))) return rows;
+      return rows.map(row => {
+        if (row.length === 1 && String(row[0] ?? '').includes('|')) return String(row[0]).split('|').map(v => v.trim());
+        return row;
+      });
+    }
+    async function parseExcelFile(file) {
+      if (!window.XLSX) throw new Error('Komponen pembaca Excel belum termuat. Periksa koneksi internet lalu muat ulang halaman.');
+      const buffer = await file.arrayBuffer();
+      const workbook = window.XLSX.read(buffer, { type: 'array', raw: false });
+      const firstSheetName = workbook.SheetNames[0];
+      if (!firstSheetName) throw new Error('File Excel tidak memiliki sheet.');
+      const worksheet = workbook.Sheets[firstSheetName];
+      let rows = window.XLSX.utils.sheet_to_json(worksheet, { header: 1, defval: '', raw: false, blankrows: false });
+      rows = splitPipeRows(rows);
+      if (!rows.length || rows.length < 2) throw new Error('File harus memiliki baris judul kolom dan minimal satu baris data.');
+      const headers = rows[0].map(normalizeHeader);
+      const findColumn = names => headers.findIndex(header => names.includes(header));
+      const partnerCol = findColumn(['nama mitra','mitra','nama partner','partner']);
+      const menuCol = findColumn(['nama menu','menu','nama produk','produk']);
+      const codeCol = findColumn(['kode','code','barcode','kode barcode','kode menu']);
+      if (partnerCol < 0 || menuCol < 0 || codeCol < 0) {
+        throw new Error('Judul kolom wajib: nama mitra, nama menu, dan kode. Pastikan ketiganya berada pada baris pertama.');
+      }
+      const parsed = [];
+      const problems = [];
+      rows.slice(1).forEach((row, offset) => {
+        if (row.every(cell => String(cell ?? '').trim() === '')) return;
+        const partnerName = String(row[partnerCol] ?? '').trim();
+        const menuName = String(row[menuCol] ?? '').trim();
+        const code = String(row[codeCol] ?? '').trim();
+        const excelRow = offset + 2;
+        if (!partnerName || !menuName || !code) { problems.push('baris ' + excelRow + ': ada kolom kosong'); return; }
+        if (menuName.length > 120 || partnerName.length > 100 || code.length > 100) { problems.push('baris ' + excelRow + ': ada teks lebih dari batas karakter'); return; }
+        if (!/^[\x20-\x7E]+$/.test(code)) { problems.push('baris ' + excelRow + ': kode harus berupa karakter ASCII yang bisa dicetak'); return; }
+        parsed.push({ id: 'item_' + String(parsed.length + 1).padStart(6,'0'), partnerName, menuName, code, importedAt: Date.now() });
+      });
+      if (problems.length) throw new Error('Perbaiki data Excel dahulu: ' + problems.slice(0,6).join('; ') + (problems.length > 6 ? '; dan ' + (problems.length-6) + ' masalah lainnya' : '') + '.');
+      if (!parsed.length) throw new Error('Tidak ditemukan baris data yang bisa diimpor.');
+      return parsed;
+    }
+    $('catalogImportForm').addEventListener('submit', async event => {
       event.preventDefault();
-      if (demoMode) { showToast('Simulasi lokal aktif. Gunakan tombol demo untuk masuk.'); return; }
-      if (!auth) { showFeedback('loginFeedback', 'Firebase belum siap. Periksa konfigurasi Firebase.', 'error'); return; }
-      const email = $('adminEmail').value.trim(), password = $('adminPassword').value;
-      $('loginBtn').disabled = true; $('loginBtn').textContent = 'Memeriksa akses…'; $('loginFeedback').classList.add('hidden');
+      const file = $('excelFile').files?.[0];
+      if (!file) { showToast('Pilih file Excel terlebih dahulu.', true); return; }
+      $('importCatalogBtn').disabled = true;
+      $('importCatalogBtn').textContent = 'Membaca file…';
       try {
-        const credential = await signInWithEmailAndPassword(auth, email, password);
-        if (!(await checkAdmin(credential.user.uid))) {
-          await signOut(auth);
-          showFeedback('loginFeedback', 'Akun berhasil login, tetapi UID belum terdaftar sebagai admin pada database.', 'error');
-          return;
+        const parsed = await parseExcelFile(file);
+        const confirmed = window.confirm('Ditemukan ' + parsed.length + ' data menu/mitra. Import ini akan MENGGANTIKAN katalog sebelumnya. Lanjutkan?');
+        if (!confirmed) return;
+        if (demoMode) {
+          localStorage.setItem(DEMO_CATALOG_KEY, JSON.stringify(parsed));
+          setCatalog(parsed);
+          updateCatalogStatus(parsed.length + ' data berhasil diimpor ke penyimpanan lokal browser ini. Untuk sinkron antarperangkat, konfigurasi Firebase dahulu.');
+          showToast('Katalog Excel berhasil diimpor ke demo lokal.');
+        } else {
+          if (!db) throw new Error('Firebase belum berhasil diinisialisasi.');
+          const payload = {};
+          parsed.forEach((item, index) => { payload['item_' + String(index + 1).padStart(6,'0')] = item; });
+          await set(ref(db, 'stickerCatalog'), payload);
+          setCatalog(parsed);
+          showToast('Katalog Excel berhasil disimpan dan disinkronkan ke Firebase.');
         }
-        dashboardUid = credential.user.uid;
-        showDashboard(); showToast('Login admin berhasil.');
+        $('excelFile').value = '';
       } catch (error) {
         console.error(error);
-        const message = error.code === 'auth/invalid-credential' || error.code === 'auth/wrong-password' || error.code === 'auth/user-not-found'
-          ? 'Email atau password tidak sesuai.'
-          : error.code === 'auth/too-many-requests' ? 'Terlalu banyak percobaan. Coba lagi nanti.' : 'Login gagal. Periksa koneksi, Firebase Authentication, dan konfigurasi.';
-        showFeedback('loginFeedback', message, 'error');
-      } finally { $('loginBtn').disabled = false; $('loginBtn').textContent = 'Masuk ke panel admin'; }
+        updateCatalogStatus(error?.message || 'Import gagal.', true);
+        showToast(error?.message || 'Gagal mengimpor Excel.', true);
+      } finally {
+        $('importCatalogBtn').disabled = false;
+        $('importCatalogBtn').textContent = 'Import katalog';
+      }
     });
-    $('demoAdminBtn').addEventListener('click', () => { demoMode = true; showDashboard(); showToast('Simulasi admin lokal dibuka.'); });
-    $('logoutBtn').addEventListener('click', async () => {
-      if (detachOrders) { detachOrders(); detachOrders = null; }
-      dashboardUid = '';
-      if (!demoMode && auth) { try { await signOut(auth); } catch (error) { console.error(error); } }
-      showLogin(); showToast('Kamu telah keluar dari panel admin.');
+    $('downloadTemplateBtn').addEventListener('click', () => {
+      if (!window.XLSX) { showToast('Komponen Excel belum termuat. Periksa koneksi internet.', true); return; }
+      const workbook = window.XLSX.utils.book_new();
+      const worksheet = window.XLSX.utils.aoa_to_sheet([['nama mitra','nama menu','kode']]);
+      worksheet['!cols'] = [{wch:22},{wch:32},{wch:18}];
+      window.XLSX.utils.book_append_sheet(workbook, worksheet, 'Katalog');
+      window.XLSX.writeFile(workbook, 'template_katalog_sticker_abba_bento.xlsx');
     });
 
     function renderOrders() {
@@ -397,11 +444,12 @@
         const main = document.createElement('div'); main.className = 'order-main';
         const overline = document.createElement('div'); overline.className = 'order-overline';
         const status = document.createElement('span'); status.className = 'status-chip ' + statusKind(order.status); status.textContent = statusLabel(order.status);
-        const sku = document.createElement('span'); sku.className = 'sku-chip'; sku.textContent = order.sku || menuCode(order.menuName);
+        const sku = document.createElement('span'); sku.className = 'sku-chip'; sku.textContent = order.sku || order.code || menuCode(order.menuName);
         const date = document.createElement('span'); date.className = 'time-chip'; date.textContent = formatDate(order.createdAt);
         overline.append(status,sku,date);
         const name = document.createElement('div'); name.className = 'order-title'; name.textContent = order.menuName || '(Nama menu kosong)';
-        const meta = document.createElement('div'); meta.className = 'order-meta'; meta.textContent = 'Referensi: ' + String(order.id || '').slice(-8).toUpperCase() + (order.qty ? ' · Jumlah terakhir: ' + order.qty + ' stiker' : ' · Jumlah belum ditentukan');
+        const meta = document.createElement('div'); meta.className = 'order-meta';
+        meta.textContent = (order.partnerName ? 'Mitra: ' + order.partnerName + ' · ' : '') + 'Referensi: ' + String(order.id || '').slice(-8).toUpperCase() + (order.qty ? ' · Jumlah terakhir: ' + order.qty + ' stiker' : ' · Jumlah belum ditentukan');
         main.append(overline,name,meta);
         const actions = document.createElement('div'); actions.className = 'order-actions';
         const qtyBox = document.createElement('label'); qtyBox.className = 'qty-box'; qtyBox.append(document.createTextNode('Jumlah'));
@@ -425,20 +473,16 @@
       document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.toggle('active', btn === button)); renderOrders();
     });
 
-    function currentLabelDimensions() {
-      const [width,height] = $('labelSize').value.split('x').map(Number); return {width,height};
-    }
     function applyPrintDimensions() {
-      const {width,height} = currentLabelDimensions();
-      $('dynamicPrintStyle').textContent = `@page { size: ${width}mm ${height}mm; margin: 0; } @media print { .print-label { --label-width:${width}mm; --label-height:${height}mm; width:${width}mm!important; height:${height}mm!important; } }`;
-      document.documentElement.style.setProperty('--label-width', width + 'mm'); document.documentElement.style.setProperty('--label-height', height + 'mm');
+      const width = 40, height = 30;
+      $('dynamicPrintStyle').textContent = `@page { size: ${width}mm ${height}mm; margin: 0; } @media print { .print-label { width:${width}mm!important; height:${height}mm!important; } }`;
     }
     function buildPrintLabel({name, sku, test=false}) {
       const label = document.createElement('div'); label.className = 'print-label';
       const title = document.createElement('div'); title.className = 'print-name'; title.textContent = name;
       const svg = document.createElementNS('http://www.w3.org/2000/svg','svg'); svg.classList.add('print-barcode');
       try { window.JsBarcode(svg, sku, {format:'CODE128', displayValue:false, margin:0, width:1.15, height:34, lineColor:'#000000', background:'#ffffff'}); }
-      catch (error) { console.error(error); throw new Error('Barcode tidak dapat dibuat. Periksa apakah pustaka barcode berhasil dimuat.'); }
+      catch (error) { console.error(error); throw new Error('Barcode tidak dapat dibuat. Periksa kode di Excel dan pastikan pustaka barcode termuat.'); }
       const code = document.createElement('div'); code.className = 'print-code'; code.textContent = sku;
       label.append(title,svg,code);
       if (test) { const small = document.createElement('div'); small.className = 'print-small'; small.textContent = 'UJI PRINTER · ABBA BENTO'; label.append(small); }
@@ -446,14 +490,14 @@
     }
     function openPrintDialog() {
       applyPrintDimensions();
-      // Browser print dialog menyerahkan pekerjaan ke driver printer yang dipilih di komputer.
       window.requestAnimationFrame(() => window.print());
     }
     async function printOrder(order, rawQty) {
       const qty = Number.parseInt(rawQty,10);
       if (!Number.isInteger(qty) || qty < 1 || qty > 500) { showToast('Jumlah stiker harus 1 sampai 500.', true); return; }
       if (!window.JsBarcode) { showToast('Pustaka barcode belum termuat. Periksa koneksi internet lalu muat ulang.', true); return; }
-      const sku = order.sku || menuCode(order.menuName);
+      const sku = String(order.sku || order.code || '').trim();
+      if (!sku) { showToast('Kode barcode asli tidak tersedia. Periksa katalog Excel sebelum mencetak.', true); return; }
       const printRoot = $('printRoot'); printRoot.replaceChildren();
       try {
         for (let i=0; i<qty; i++) printRoot.append(buildPrintLabel({name:order.menuName,sku}));
@@ -501,11 +545,20 @@
       catch (error) { showToast(error.message || 'Gagal membuat stiker uji.',true); return; }
       activePrintJob = {test:true}; openPrintDialog(); showToast('Dialog cetak dibuka. Pilih CODESHOP CB-199BT dan cetak satu label uji.');
     });
-    $('labelSize').addEventListener('change', applyPrintDimensions);
 
-
-    // Halaman admin berdiri sendiri; tampilkan login lalu pulihkan sesi Firebase jika ada.
-    showLogin();
+    if (demoMode) {
+      orders = getDemoOrders().sort((a,b)=>Number(b.createdAt||0)-Number(a.createdAt||0));
+      renderOrders(); setCatalog(getDemoCatalog());
+      window.addEventListener('storage', event => {
+        if (event.key === DEMO_KEY) { orders = getDemoOrders().sort((a,b)=>Number(b.createdAt||0)-Number(a.createdAt||0)); renderOrders(); }
+        if (event.key === DEMO_CATALOG_KEY) setCatalog(getDemoCatalog());
+      });
+    } else if (db) {
+      listenForOrders(); listenForCatalog();
+    } else {
+      updateCatalogStatus('Firebase tidak terhubung. Periksa konfigurasi.', true);
+      setDbBadge('Firebase gagal', false);
+    }
     applyPrintDimensions();
     updatePrinterStatus();
   </script>
