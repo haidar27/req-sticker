@@ -126,6 +126,11 @@
     .field:disabled{background:#f1f4f2;color:#7f8b84;cursor:not-allowed}
     .primary-btn:disabled{opacity:.55;cursor:not-allowed;box-shadow:none;transform:none}
     .hidden{display:none!important}
+    .access-gate{max-width:720px;margin:34px auto;padding:clamp(28px,5vw,52px);text-align:center}
+    .access-icon{width:66px;height:66px;border-radius:22px;background:#e1f3e8;color:#14513f;display:grid;place-items:center;font-size:31px;margin:0 auto 23px}
+    .access-gate h1{margin-bottom:13px}
+    .access-gate p{color:var(--muted);font-size:14px;line-height:1.7;max-width:520px;margin:0 auto 17px}
+    .access-hours-pill{display:inline-flex;align-items:center;justify-content:center;padding:10px 15px;background:#edf7f0;border:1px solid #d3e5da;border-radius:999px;color:#225841;font-size:12px;font-weight:800}
     .toast-region{position:fixed;right:18px;bottom:18px;z-index:30;display:grid;gap:9px;width:min(360px,calc(100vw - 36px));pointer-events:none}
     .toast{padding:13px 15px;border-radius:12px;color:#fff;background:#183d2f;box-shadow:0 10px 25px #11251d2b;font-size:12px;line-height:1.5;animation:toast-in .18s ease-out}
     .toast.error{background:#8f241b}
@@ -164,7 +169,14 @@
       </div>
     </header>
     <main class="container">
-      <section id="partnerView">
+      <section id="accessGate" class="panel access-gate" role="status" aria-live="polite">
+        <div class="access-icon">◷</div>
+        <p class="eyebrow">Jam layanan mitra</p>
+        <h1 id="accessGateTitle">Memeriksa jam layanan…</h1>
+        <p id="accessGateMessage">Sedang menyinkronkan jadwal akses. Halaman pengajuan akan terbuka setelah jadwal berhasil diperiksa.</p>
+        <div class="access-hours-pill" id="accessGateHours">Jadwal harian: 08:00–17:00 WIB</div>
+      </section>
+      <section id="partnerView" class="hidden">
         <div class="hero">
           <div><p class="eyebrow">Pemesanan stiker barcode</p><h1>Ajukan cetak,<br>lebih praktis.</h1><p class="subheading">Cari nama menu atau nama mitra dari katalog resmi, lalu pilih rekomendasi yang tepat. Pesanan masuk ke antrean admin dengan kode barcode yang sudah terdaftar.</p></div>
           <div class="hero-tag"><span class="dot"></span> Formulir mitra Abba Bento</div>
@@ -227,6 +239,12 @@
     let selectedCatalogEntry = null;
     const DEMO_KEY = 'abbaBarcodeDemoOrders_v1';
     const DEMO_CATALOG_KEY = 'abbaBarcodeCatalog_v1';
+    const ACCESS_HOURS_KEY = 'abbaBarcodePartnerAccessHours_v1';
+    const DEFAULT_ACCESS_HOURS = { openTime: '08:00', closeTime: '17:00', timezone: 'Asia/Jakarta' };
+    let accessHours = { ...DEFAULT_ACCESS_HOURS };
+    let accessHoursLoaded = false;
+    let accessHoursError = false;
+    let wasAccessOpen = false;
 
     const normalizeText = (value) => String(value ?? '').normalize('NFKC').trim().replace(/\s+/g, ' ').toLocaleLowerCase('id-ID');
     const showToast = (message, isError=false) => {
@@ -238,6 +256,66 @@
       const icon = document.createElement('span'); icon.textContent = kind === 'error' ? '⚠' : (kind === 'success' ? '✓' : 'ⓘ');
       const text = document.createElement('div'); text.textContent = message; target.append(icon, text);
     };
+
+    const isValidTime = value => typeof value === 'string' && /^([01]\d|2[0-3]):[0-5]\d$/.test(value);
+    function normalizeAccessHours(value) {
+      return {
+        openTime: isValidTime(value?.openTime) ? value.openTime : DEFAULT_ACCESS_HOURS.openTime,
+        closeTime: isValidTime(value?.closeTime) ? value.closeTime : DEFAULT_ACCESS_HOURS.closeTime,
+        timezone: 'Asia/Jakarta'
+      };
+    }
+    function getJakartaMinutes() {
+      const parts = new Intl.DateTimeFormat('en-GB', { timeZone: 'Asia/Jakarta', hour: '2-digit', minute: '2-digit', hourCycle: 'h23' }).formatToParts(new Date());
+      const hour = Number(parts.find(part => part.type === 'hour')?.value || 0);
+      const minute = Number(parts.find(part => part.type === 'minute')?.value || 0);
+      return hour * 60 + minute;
+    }
+    function timeToMinutes(value) { const [hour, minute] = value.split(':').map(Number); return hour * 60 + minute; }
+    function isAccessOpenNow() {
+      if (!accessHoursLoaded || accessHoursError) return false;
+      const now = getJakartaMinutes();
+      const open = timeToMinutes(accessHours.openTime), close = timeToMinutes(accessHours.closeTime);
+      if (open === close) return true;
+      return open < close ? now >= open && now < close : now >= open || now < close;
+    }
+    function updateAccessView() {
+      const gate = $('accessGate');
+      const view = $('partnerView');
+      const hoursLabel = `${accessHours.openTime}–${accessHours.closeTime} WIB`;
+      $('accessGateHours').textContent = `Jam layanan harian: ${hoursLabel}`;
+      if (!accessHoursLoaded || accessHoursError) {
+        gate.classList.remove('hidden'); view.classList.add('hidden');
+        $('accessGateTitle').textContent = accessHoursError ? 'Jam layanan tidak dapat dimuat' : 'Memeriksa jam layanan…';
+        $('accessGateMessage').textContent = accessHoursError
+          ? 'Halaman pengajuan dikunci karena jadwal tidak dapat diperiksa. Coba muat ulang beberapa saat lagi.'
+          : 'Sedang menyinkronkan jadwal akses. Halaman pengajuan akan terbuka setelah jadwal berhasil diperiksa.';
+        $('submitOrder').disabled = true;
+        wasAccessOpen = false;
+        return;
+      }
+      const open = isAccessOpenNow();
+      gate.classList.toggle('hidden', open);
+      view.classList.toggle('hidden', !open);
+      $('submitOrder').disabled = !open || !selectedCatalogEntry;
+      if (!open) {
+        $('accessGateTitle').textContent = 'Pengajuan sedang ditutup';
+        $('accessGateMessage').textContent = `Halaman mitra hanya dapat digunakan pada jam ${hoursLabel}. Silakan kembali saat jam layanan dibuka.`;
+      }
+      if (!open && wasAccessOpen) {
+        selectedCatalogEntry = null;
+        $('menuName').value = '';
+        $('selectionInfo').classList.add('hidden');
+        $('suggestions').classList.add('hidden');
+      }
+      wasAccessOpen = open;
+    }
+    function applyAccessHours(value) {
+      accessHours = normalizeAccessHours(value);
+      accessHoursLoaded = true;
+      accessHoursError = false;
+      updateAccessView();
+    }
 
     if (firebaseConfigured) {
       try { app = initializeApp(firebaseConfig); db = getDatabase(app); }
@@ -288,6 +366,29 @@
     } else {
       updateCatalogNotice('Firebase belum berhasil terhubung. Periksa konfigurasi Firebase dan muat ulang halaman.', 'error');
     }
+
+    if (firebaseConfigured && db) {
+      onValue(ref(db, 'stickerSettings/partnerAccess'), snapshot => {
+        applyAccessHours(snapshot.val() || DEFAULT_ACCESS_HOURS);
+      }, error => {
+        console.error(error); accessHoursError = true; accessHoursLoaded = false; updateAccessView();
+      });
+    } else if (demoMode) {
+      let storedHours = null;
+      try { storedHours = JSON.parse(localStorage.getItem(ACCESS_HOURS_KEY) || 'null'); } catch {}
+      applyAccessHours(storedHours || DEFAULT_ACCESS_HOURS);
+      window.addEventListener('storage', event => {
+        if (event.key === ACCESS_HOURS_KEY) {
+          try { applyAccessHours(JSON.parse(event.newValue || 'null') || DEFAULT_ACCESS_HOURS); }
+          catch { applyAccessHours(DEFAULT_ACCESS_HOURS); }
+        }
+      });
+    } else {
+      accessHoursError = true;
+      accessHoursLoaded = false;
+      updateAccessView();
+    }
+    window.setInterval(updateAccessView, 30000);
 
     function getDemoOrders() {
       try { const parsed = JSON.parse(localStorage.getItem(DEMO_KEY) || '[]'); return Array.isArray(parsed) ? parsed : []; }
@@ -398,6 +499,11 @@
 
     $('orderForm').addEventListener('submit', async (event) => {
       event.preventDefault();
+      if (!isAccessOpenNow()) {
+        updateAccessView();
+        showToast('Pengajuan hanya dapat dilakukan pada jam layanan yang ditentukan.', true);
+        return;
+      }
       if (!selectedCatalogEntry) {
         showFeedback('partnerFeedback', 'Pilih satu rekomendasi menu dari katalog sebelum mengajukan pencetakan.', 'error');
         $('menuName').focus(); renderSuggestions(); return;
@@ -412,6 +518,7 @@
         $('selectionInfo').classList.add('hidden');
         $('suggestions').classList.add('hidden');
         showFeedback('partnerFeedback', 'Pengajuan berhasil dikirim. Kode referensi: ' + String(created.id).slice(-8).toUpperCase() + '. Menu dan barcode mengikuti katalog Excel.', 'success');
+        window.alert('terimakasih, silahkan ambil sticker dilapak WHS');
         showToast('Pengajuan stiker berhasil dikirim.');
       } catch (error) {
         console.error(error);
@@ -420,7 +527,7 @@
           : 'Pengajuan gagal dikirim. Periksa koneksi internet dan konfigurasi Firebase.';
         showFeedback('partnerFeedback', message, 'error');
       } finally {
-        $('submitOrder').disabled = !selectedCatalogEntry;
+        $('submitOrder').disabled = !selectedCatalogEntry || !isAccessOpenNow();
         $('submitOrder').innerHTML = '<span>＋</span> Ajukan pencetakan';
       }
     });

@@ -89,6 +89,10 @@
     .utility-controls{display:flex;flex-wrap:wrap;align-items:center;gap:9px;margin-top:15px}
     .small-select{height:39px;max-width:180px;border:1px solid #d9e3dd;background:#fff;border-radius:10px;padding:0 10px;font-size:12px;color:#31453b}
     .mini-btn{padding:10px 12px;font-size:12px;border-radius:10px}
+    .hours-controls{display:flex;align-items:flex-end;gap:10px;flex-wrap:wrap;margin-top:15px}
+    .hours-field{display:grid;gap:7px;font-size:11px;font-weight:800;color:#627168}
+    .time-input{height:40px;min-width:135px;border:1px solid #d9e3dd;background:#fff;border-radius:10px;padding:0 10px;font-size:13px;color:#31453b}
+    .hours-status{font-size:12px;line-height:1.55;color:var(--muted);margin-top:12px}
     .orders-toolbar{display:flex;align-items:center;justify-content:space-between;gap:15px;margin:27px 0 14px}
     .orders-toolbar h2{margin-bottom:0}
     .filter-pills{display:flex;flex-wrap:wrap;gap:6px}
@@ -181,10 +185,22 @@
               <p class="utility-copy">Baris pertama harus berisi judul kolom. Data yang kosong atau kode yang tidak valid akan ditolak sebelum import, supaya kode barcode tidak tertukar.</p>
             </form>
           </section>
+          <section class="panel utility-panel">
+            <div class="utility-top">
+              <div><div class="utility-title">Jam akses halaman mitra</div><div class="utility-copy">Atur jam harian saat mitra boleh mengakses formulir. Waktu menggunakan WIB (Asia/Jakarta). Jika jam buka lebih akhir daripada jam tutup, jadwal melewati tengah malam. Jika kedua jam sama, akses aktif 24 jam.</div></div>
+              <div class="hero-tag">Pengaturan akses</div>
+            </div>
+            <div class="hours-controls">
+              <label class="hours-field" for="partnerOpenTime">Jam mulai akses<input class="time-input" id="partnerOpenTime" type="time" value="08:00" required></label>
+              <label class="hours-field" for="partnerCloseTime">Jam tutup akses<input class="time-input" id="partnerCloseTime" type="time" value="17:00" required></label>
+              <button type="button" class="primary-btn mini-btn" id="saveAccessHoursBtn">Simpan jam akses</button>
+            </div>
+            <div class="hours-status" id="accessHoursStatus" role="status" aria-live="polite">Jam akses default: 08:00–17:00 WIB. Simpan untuk menerapkan pengaturan di semua perangkat.</div>
+          </section>
           <div class="stats-grid">
             <div class="panel stat-card"><div class="stat-label">Menunggu diproses</div><div class="stat-value" id="statPending">0</div><div class="stat-foot">Pesanan baru dari mitra</div></div>
             <div class="panel stat-card"><div class="stat-label">Perlu konfirmasi</div><div class="stat-value" id="statConfirm">0</div><div class="stat-foot">Dialog cetak sudah ditutup</div></div>
-            <div class="panel stat-card"><div class="stat-label">Selesai</div><div class="stat-value" id="statDone">0</div><div class="stat-foot">Dikonfirmasi admin</div></div>
+            <div class="panel stat-card"><div class="stat-label">Penyelesaian</div><div class="stat-value" id="statDone" style="font-size:20px">Auto hapus</div><div class="stat-foot">Pesanan dihapus setelah selesai</div></div>
           </div>
           <section class="panel utility-panel">
             <div class="utility-top">
@@ -198,9 +214,9 @@
               <button type="button" id="printerReadyBtn" class="primary-btn mini-btn">Tandai printer siap</button>
             </div>
           </section>
-          <div class="orders-toolbar"><h2>Daftar pesanan</h2><div class="filter-pills" id="filterPills"><button type="button" class="filter-btn active" data-filter="all">Semua</button><button type="button" class="filter-btn" data-filter="pending">Menunggu</button><button type="button" class="filter-btn" data-filter="confirm">Perlu konfirmasi</button><button type="button" class="filter-btn" data-filter="done">Selesai</button></div></div>
+          <div class="orders-toolbar"><h2>Daftar pesanan</h2><div class="filter-pills" id="filterPills"><button type="button" class="filter-btn active" data-filter="all">Semua</button><button type="button" class="filter-btn" data-filter="pending">Menunggu</button><button type="button" class="filter-btn" data-filter="confirm">Perlu konfirmasi</button></div></div>
           <div id="ordersList" class="orders-list"></div>
-          <div class="notice info" style="margin-top:18px;margin-bottom:0"><span>ⓘ</span><div>Setelah dialog cetak ditutup, sistem hanya bisa mengetahui dialognya selesai—bukan memastikan stiker benar-benar keluar. Periksa hasilnya, lalu tekan <strong>Tandai selesai</strong>. Ukuran label sistem dikunci pada 40 × 30 mm. Pastikan driver printer memakai ukuran kertas 40 × 30 mm dan matikan header/footer browser saat mencetak.</div></div>
+          <div class="notice info" style="margin-top:18px;margin-bottom:0"><span>ⓘ</span><div>Setelah dialog cetak ditutup, sistem hanya bisa mengetahui dialognya selesai—bukan memastikan stiker benar-benar keluar. Periksa hasilnya, lalu tekan <strong>Tandai selesai</strong> untuk menghapus pesanan dari penyimpanan. Ukuran label sistem dikunci pada 40 × 30 mm. Pastikan driver printer memakai ukuran kertas 40 × 30 mm dan matikan header/footer browser saat mencetak.</div></div>
           <div class="footer-note"><span>Abba Bento · Admin barcode sticker</span><span>Data pesanan realtime melalui Firebase</span></div>
       </section>
     </main>
@@ -212,7 +228,7 @@
   <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
   <script type="module">
     import { initializeApp } from 'https://www.gstatic.com/firebasejs/11.10.0/firebase-app.js';
-    import { getDatabase, ref, onValue, update, set } from 'https://www.gstatic.com/firebasejs/11.10.0/firebase-database.js';
+    import { getDatabase, ref, onValue, update, set, remove } from 'https://www.gstatic.com/firebasejs/11.10.0/firebase-database.js';
 
     // Harus sama dengan firebaseConfig pada index.html.
     const firebaseConfig = {
@@ -232,6 +248,9 @@
     const DEMO_KEY = 'abbaBarcodeDemoOrders_v1';
     const DEMO_CATALOG_KEY = 'abbaBarcodeCatalog_v1';
     const PRINTER_KEY = 'abbaBarcodePrinterReady_v1';
+    const ACCESS_HOURS_KEY = 'abbaBarcodePartnerAccessHours_v1';
+    const DEFAULT_ACCESS_HOURS = { openTime: '08:00', closeTime: '17:00', timezone: 'Asia/Jakarta' };
+    let accessHours = { ...DEFAULT_ACCESS_HOURS };
 
     const menuCode = (name) => {
       // Fallback untuk pesanan lama yang belum mempunyai kode katalog.
@@ -291,6 +310,31 @@
       updateCatalogStatus(catalogItems.length ? catalogItems.length + ' data menu/mitra siap dipakai untuk pencarian mitra.' : 'Belum ada katalog. Pilih file Excel untuk memulai.');
     }
 
+    function isValidTime(value) { return typeof value === 'string' && /^([01]\d|2[0-3]):[0-5]\d$/.test(value); }
+    function applyAccessHours(value, saved = true) {
+      accessHours = {
+        openTime: isValidTime(value?.openTime) ? value.openTime : DEFAULT_ACCESS_HOURS.openTime,
+        closeTime: isValidTime(value?.closeTime) ? value.closeTime : DEFAULT_ACCESS_HOURS.closeTime,
+        timezone: 'Asia/Jakarta'
+      };
+      $('partnerOpenTime').value = accessHours.openTime;
+      $('partnerCloseTime').value = accessHours.closeTime;
+      const label = `${accessHours.openTime}–${accessHours.closeTime} WIB`;
+      $('accessHoursStatus').textContent = saved
+        ? `Jam akses mitra tersimpan: ${label}. Pengaturan berlaku setiap hari dan disinkronkan melalui Firebase.`
+        : `Belum ada pengaturan yang tersimpan. Default saat ini: ${label}. Tekan “Simpan jam akses” untuk menerapkan jadwal.`;
+    }
+    function listenForAccessHours() {
+      onValue(ref(db, 'stickerSettings/partnerAccess'), snapshot => {
+        const savedValue = snapshot.val();
+        applyAccessHours(savedValue || DEFAULT_ACCESS_HOURS, Boolean(savedValue));
+      }, error => {
+        console.error(error);
+        $('accessHoursStatus').textContent = 'Tidak bisa membaca jam akses dari Firebase. Periksa Security Rules.';
+        showToast('Gagal membaca pengaturan jam akses.', true);
+      });
+    }
+
     if (firebaseConfigured) {
       try { app = initializeApp(firebaseConfig); db = getDatabase(app); }
       catch (error) {
@@ -308,7 +352,11 @@
       setDbBadge('Menghubungkan…', false);
       detachOrders = onValue(ref(db, 'orders'), snapshot => {
         const value = snapshot.val() || {};
-        orders = Object.entries(value).map(([id, order]) => ({ id, ...order })).sort((a, b) => Number(b.createdAt || 0) - Number(a.createdAt || 0));
+        const entries = Object.entries(value);
+        entries.filter(([, order]) => order?.status === 'completed').forEach(([id]) => {
+          remove(ref(db, 'orders/' + id)).catch(error => console.warn('Pesanan lama selesai belum bisa dihapus:', error));
+        });
+        orders = entries.filter(([, order]) => order?.status !== 'completed').map(([id, order]) => ({ id, ...order })).sort((a, b) => Number(b.createdAt || 0) - Number(a.createdAt || 0));
         setDbBadge('Firebase realtime aktif', true); renderOrders();
       }, error => {
         console.error(error); setDbBadge('Akses database gagal', false);
@@ -335,6 +383,17 @@
       }
       if (!db) throw new Error('Firebase belum siap.');
       await update(ref(db, 'orders/' + orderId), patch);
+    }
+
+    async function deleteOrder(orderId) {
+      if (demoMode) {
+        orders = getDemoOrders().filter(order => order.id !== orderId && order.status !== 'completed');
+        if (!saveDemoOrders()) throw new Error('Data pesanan gagal dihapus dari browser.');
+        renderOrders();
+        return;
+      }
+      if (!db) throw new Error('Firebase belum siap.');
+      await remove(ref(db, 'orders/' + orderId));
     }
 
     function normalizeHeader(value) {
@@ -424,17 +483,44 @@
       window.XLSX.writeFile(workbook, 'template_katalog_sticker_abba_bento.xlsx');
     });
 
+    $('saveAccessHoursBtn').addEventListener('click', async () => {
+      const openTime = $('partnerOpenTime').value;
+      const closeTime = $('partnerCloseTime').value;
+      if (!isValidTime(openTime) || !isValidTime(closeTime)) {
+        showToast('Pilih jam mulai dan jam tutup yang valid.', true); return;
+      }
+      const payload = { openTime, closeTime, timezone: 'Asia/Jakarta', updatedAt: Date.now() };
+      const button = $('saveAccessHoursBtn'); button.disabled = true; button.textContent = 'Menyimpan…';
+      try {
+        if (demoMode) {
+          localStorage.setItem(ACCESS_HOURS_KEY, JSON.stringify(payload));
+          applyAccessHours(payload, true);
+          showToast('Jam akses tersimpan di browser ini. Mode demo tidak menyinkron antarperangkat.');
+        } else {
+          if (!db) throw new Error('Firebase belum siap.');
+          await set(ref(db, 'stickerSettings/partnerAccess'), payload);
+          applyAccessHours(payload, true);
+          showToast('Jam akses mitra berhasil disimpan.');
+        }
+      } catch (error) {
+        console.error(error);
+        $('accessHoursStatus').textContent = 'Gagal menyimpan jam akses. Periksa koneksi dan Security Rules Firebase.';
+        showToast('Jam akses gagal disimpan.', true);
+      } finally {
+        button.disabled = false; button.textContent = 'Simpan jam akses';
+      }
+    });
+
     function renderOrders() {
       if (!$('ordersList')) return;
       const pending = orders.filter(o => !o.status || o.status === 'pending').length;
       const confirm = orders.filter(o => o.status === 'needs_confirmation').length;
-      const done = orders.filter(o => o.status === 'completed').length;
-      $('statPending').textContent = pending; $('statConfirm').textContent = confirm; $('statDone').textContent = done;
-      const filtered = orders.filter(o => activeFilter === 'all' || (activeFilter === 'pending' && (!o.status || o.status === 'pending')) || (activeFilter === 'confirm' && o.status === 'needs_confirmation') || (activeFilter === 'done' && o.status === 'completed'));
+      $('statPending').textContent = pending; $('statConfirm').textContent = confirm; $('statDone').textContent = 'Auto hapus';
+      const filtered = orders.filter(o => activeFilter === 'all' || (activeFilter === 'pending' && (!o.status || o.status === 'pending')) || (activeFilter === 'confirm' && o.status === 'needs_confirmation'));
       const root = $('ordersList'); root.replaceChildren();
       if (!filtered.length) {
         const empty = document.createElement('div'); empty.className = 'empty-state';
-        const icon = document.createElement('div'); icon.className = 'empty-icon'; icon.textContent = activeFilter === 'done' ? '✓' : '▤';
+        const icon = document.createElement('div'); icon.className = 'empty-icon'; icon.textContent = '▤';
         const strong = document.createElement('strong'); strong.textContent = activeFilter === 'all' ? 'Belum ada pesanan' : 'Tidak ada pesanan pada kategori ini';
         const p = document.createElement('p'); p.textContent = activeFilter === 'all' ? 'Pengajuan dari mitra akan muncul di sini secara otomatis.' : 'Pesanan akan muncul di bagian ini ketika statusnya sesuai.';
         empty.append(icon,strong,p); root.append(empty); return;
@@ -456,12 +542,12 @@
         const qty = document.createElement('input'); qty.className = 'qty-input'; qty.type = 'number'; qty.min = '1'; qty.max = '500'; qty.step = '1'; qty.inputMode = 'numeric'; qty.setAttribute('aria-label','Jumlah stiker'); qty.value = qtyDrafts[order.id] ?? order.qty ?? 1;
         qty.addEventListener('input', () => { qtyDrafts[order.id] = qty.value; }); qtyBox.append(qty);
         const printBtn = document.createElement('button'); printBtn.type = 'button'; printBtn.className = 'primary-btn mini-btn';
-        printBtn.textContent = order.status === 'completed' || order.status === 'needs_confirmation' ? 'Cetak ulang' : 'Cetak';
+        printBtn.textContent = order.status === 'needs_confirmation' ? 'Cetak ulang' : 'Cetak';
         printBtn.addEventListener('click', () => printOrder(order, qty.value));
         actions.append(qtyBox,printBtn);
         if (order.status === 'needs_confirmation') {
           const doneBtn = document.createElement('button'); doneBtn.type = 'button'; doneBtn.className = 'outline-btn mini-btn'; doneBtn.textContent = 'Tandai selesai';
-          doneBtn.addEventListener('click', async () => { doneBtn.disabled = true; try { await updateOrder(order.id,{status:'completed',completedAt:Date.now()}); delete qtyDrafts[order.id]; showToast('Pesanan ditandai selesai.'); } catch(e){ console.error(e); showToast('Gagal memperbarui status pesanan.',true); doneBtn.disabled = false; } });
+          doneBtn.addEventListener('click', async () => { doneBtn.disabled = true; try { await deleteOrder(order.id); delete qtyDrafts[order.id]; showToast('Pesanan selesai dan langsung dihapus dari penyimpanan.'); } catch(e){ console.error(e); showToast('Gagal menghapus pesanan dari penyimpanan.',true); doneBtn.disabled = false; } });
           actions.append(doneBtn);
         }
         card.append(main,actions); root.append(card);
@@ -547,14 +633,19 @@
     });
 
     if (demoMode) {
-      orders = getDemoOrders().sort((a,b)=>Number(b.createdAt||0)-Number(a.createdAt||0));
+      orders = getDemoOrders().filter(order => order.status !== 'completed').sort((a,b)=>Number(b.createdAt||0)-Number(a.createdAt||0));
+      saveDemoOrders();
       renderOrders(); setCatalog(getDemoCatalog());
+      let savedHours = null;
+      try { savedHours = JSON.parse(localStorage.getItem(ACCESS_HOURS_KEY) || 'null'); } catch {}
+      applyAccessHours(savedHours || DEFAULT_ACCESS_HOURS, Boolean(savedHours));
       window.addEventListener('storage', event => {
-        if (event.key === DEMO_KEY) { orders = getDemoOrders().sort((a,b)=>Number(b.createdAt||0)-Number(a.createdAt||0)); renderOrders(); }
+        if (event.key === DEMO_KEY) { orders = getDemoOrders().filter(order => order.status !== 'completed').sort((a,b)=>Number(b.createdAt||0)-Number(a.createdAt||0)); renderOrders(); }
         if (event.key === DEMO_CATALOG_KEY) setCatalog(getDemoCatalog());
+        if (event.key === ACCESS_HOURS_KEY) { try { applyAccessHours(JSON.parse(event.newValue || 'null') || DEFAULT_ACCESS_HOURS, Boolean(event.newValue)); } catch { applyAccessHours(DEFAULT_ACCESS_HOURS, false); } }
       });
     } else if (db) {
-      listenForOrders(); listenForCatalog();
+      listenForOrders(); listenForCatalog(); listenForAccessHours();
     } else {
       updateCatalogStatus('Firebase tidak terhubung. Periksa konfigurasi.', true);
       setDbBadge('Firebase gagal', false);
